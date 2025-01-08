@@ -55,7 +55,7 @@ const PassageJs = (function () {
     #valor-checkout-form input, #valor-checkout-form select {display:block; width: 100%; padding: 6px 12px; color: #555; background-color: #fff; background-image: none; outline: none; font-size: 14px; height: 40px; border: 1px solid rgba(60, 66, 87, 0.12); border-radius: 8px; box-shadow: inset 0 1px 1px rgb(0 0 0 / 8%);} #valor-checkout-form input:focus, #valor-checkout-form select:focus {border-color: ${submitBg}; box-shadow: inset 0 1px 1px rgb(0 0 0 / 8%), 0 0 8px rgb(102 175 233 / 60%);} #valor-checkout-form input[type="checkbox"] {width: 17px; height: 17px; vertical-align: sub; display: inline-block;}
     .separator {display: flex; align-items: center; text-align: center;} .separator::before, .separator::after {content: ''; flex: 1; border-bottom: 1px solid #000;} .separator:not(:empty)::before {margin-right: .25em;} .separator:not(:empty)::after {margin-left: .25em;} .gpay-button.new_style {border-radius: 4px !important;} .gpay-button.black.short.new_style, .gpay-button.black.plain.new_style {min-width: 250px !important;}
     #cards .d-flex { width: fit-content; position: absolute; top: 10px; right: 5px; } .d-flex span{ margin: 0 5px;} .card_error{ color: red;} button#passage-submit, div#pay-now { font-family: Roboto; color: ${submitColor}; background: ${submitBg}; width: 45%; border-radius: 4px; border: none; box-shadow: 0px -1px 1px rgb(0 0 0 / 12%), 0px 2px 5px rgb(0 0 0 / 12%), 0px 1px 1px rgb(0 0 0 / 8%); margin: 20px 10px 20px 0; padding: 15px 30px;} #cards { position:relative; } #card_fields,#address_ct{display: flex; width: 100%; justify-content: space-between} #exp,#cvv,#passage-city,#passage-state{width: 50%;} #cc-policy a {font-weight: 800; color: ${submitBg};} button#passage-submit[disabled], button#pay-now[disabled] {cursor: not-allowed; opacity: 0.65;} div#passage-cancel {display: inline-block; font-family: Roboto; color: #fff; background: #000; width: 45%; border-radius: 4px; border: none; box-shadow: 0px -1px 1px rgb(0 0 0 / 12%), 0px 2px 5px rgb(0 0 0 / 12%), 0px 1px 1px rgb(0 0 0 / 8%); margin: 20px 10px; padding: 15px 30px; text-align: center; cursor: pointer;} div#pay-now{ cursor: pointer; text-align:center;} .valor-modal{ position: fixed; top: 0; right: 0; bottom: 0; left: 0; z-index: 1050; display: none; justify-content: center; align-items: center; background: #0005;} div#passage-popup-inner{ padding: 15px 20px; background: #fff; border-radius: 5px;box-shadow: 0 5px 15px rgb(0 0 0 / 50%);} div#card-popup{width: 600px; margin: 30px auto; position: relative;}
-    @media only screen and (max-width: 580px) {#valor-checkout-form {width: 95%; margin: 5% auto;} button#passage-submit, div#pay-now { margin: 20px 0px;} div#card-popup{ margin: 50% 5%;} div#card-popup{width: 400px; margin: 30px auto; position: relative;}} .passage-loader {display: inline-block;width: 20px;height: 20px;border-radius: 50%;border: 3px solid rgba(0, 0, 0, 0.3);border-top-color: #fff;animation: passage-loader 0.6s linear infinite;margin-left: 5px;vertical-align: middle;} @keyframes passage-loader {to {transform: rotate(360deg);}}`;
+    @media only screen and (max-width: 580px) {#valor-checkout-form {width: 95%; margin: 5% auto;} button#passage-submit, div#pay-now { margin: 20px 0px;} div#card-popup{ margin: 50% 5%;} div#card-popup{width: 400px; margin: 30px auto; position: relative;}} .passage-loader {display: inline-block;width: 20px;height: 20px;border-radius: 50%;border: 3px solid rgba(0, 0, 0, 0.3);border-top-color: #fff;animation: passage-loader 0.6s linear infinite;margin-left: 5px;vertical-align: middle;} @keyframes passage-loader {to {transform: rotate(360deg);}}.error-message{font-size: 12px;margin-top: -5px;margin-bottom: 5px;color: red;display: block;}.field-error {border-color: red !important;}`;
 
   function addPassageCss() {
     const head = document.head || document.getElementsByTagName('head')[0];
@@ -76,6 +76,51 @@ const PassageJs = (function () {
     });
   }
   function buildFormJson() {
+    const isAch = passage.getAttribute('data-ach') ? true : false;
+
+    if (isAch) {
+      passageHtmlJson.push({
+        tag: 'div',
+        id: 'payment-toggle',
+        style: 'display: flex; gap: 10px; margin-bottom: 20px;',
+        children: [
+          {
+            tag: 'button',
+            id: 'card-button',
+            type: 'button',
+            children: ['CARD'],
+            style: `
+              background-color: #005cb9; 
+              color: white; 
+              border: none; 
+              border-radius: 5px; 
+              padding: 10px 20px; 
+              font-size: 16px; 
+              cursor: pointer; 
+              box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+              transition: all 0.3s ease;
+            `,
+          },
+          {
+            tag: 'button',
+            id: 'ach-button',
+            type: 'button',
+            children: ['ACH Bank'],
+            style: `
+              background-color: white; 
+              color: #005cb9; 
+              border: 2px solid #005cb9; 
+              border-radius: 5px; 
+              padding: 10px 20px; 
+              font-size: 16px; 
+              cursor: pointer; 
+              box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+              transition: all 0.3s ease;
+            `,
+          },
+        ],
+      });
+    }
     if (valorLogo === 'true') {
       passageHtmlJson.push({
         tag: 'div',
@@ -264,6 +309,7 @@ const PassageJs = (function () {
     const cardSection = {
       tag: 'div',
       id: 'card-section',
+      style: 'display: block;',
       children: [
         { tag: 'label', id: 'card-label', children: ['Card information'] },
         {
@@ -379,6 +425,128 @@ const PassageJs = (function () {
         },
       ],
     };
+
+    const achSection = {
+      tag: 'div',
+      id: 'ach-section',
+      style: 'display: none;', // Default hidden
+      children: [
+        { tag: 'label', children: ['Account Number'] },
+        {
+          tag: 'input',
+          type: 'text',
+          name: 'account_number',
+          id: 'account-number',
+          placeholder: 'Enter Account Number',
+          required: '',
+          style: `
+            display: block;
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+          `,
+        },
+        { tag: 'span', id: 'account-number-error', class: 'error-message', style: 'color: red;' },
+        { tag: 'label', children: ['Routing Number'] },
+        {
+          tag: 'input',
+          type: 'text',
+          name: 'routing_number',
+          id: 'routing-number',
+          placeholder: 'Enter Routing Number',
+          required: '',
+          style: `
+            display: block;
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+          `,
+        },
+        { tag: 'span', id: 'routing-number-error', class: 'error-message', style: 'color: red;' },
+        { tag: 'label', children: ['Name on Account'] },
+        {
+          tag: 'input',
+          type: 'text',
+          name: 'account_name',
+          id: 'account-name',
+          placeholder: 'Enter Name on Account',
+          required: '',
+          style: `
+            display: block;
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+          `,
+        },
+        { tag: 'label', children: ['Account Type'] },
+        {
+          tag: 'select',
+          name: 'account_type',
+          id: 'account-type',
+          style: `
+            display: block;
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+          `,
+          children: [
+            { tag: 'option', value: '', children: ['Select Account Type'] },
+            { tag: 'option', value: 'C', children: ['CHECKING'] },
+            { tag: 'option', value: 'S', children: ['SAVINGS'] },
+          ],
+        },
+        { tag: 'label', children: ['Entry Class'] },
+        {
+          tag: 'select',
+          name: 'entry_class',
+          id: 'entry-class',
+          style: `
+            display: block;
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+          `,
+          children: [
+            { tag: 'option', value: '', children: ['Select Entry Class'] },
+            { tag: 'option', value: 'BUSINESS', children: ['BUSINESS'] },
+            { tag: 'option', value: 'PERSONAL', children: ['PERSONAL'] },
+          ],
+        },
+        { tag: 'label', children: ['Transaction Type'] },
+        {
+          tag: 'select',
+          name: 'transaction_type',
+          id: 'transaction-type',
+          style: `
+            display: block;
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+          `,
+          children: [
+            { tag: 'option', value: '', children: ['Select Transaction Type'] },
+            { tag: 'option', value: 'DEBIT', children: ['DEBIT'] },
+            { tag: 'option', value: 'CREDIT', children: ['CREDIT'] },
+          ],
+        },
+      ],
+    };
+    if (isAch) {
+      passageHtmlJson.push(achSection);
+    }
+
     const cardHolderNameSec = {
       tag: 'div',
       id: 'card-holder-section',
@@ -530,13 +698,57 @@ const PassageJs = (function () {
       });
     }
   }
-  function submitButtonStatus() {
-    if (cardNumberValid === true && cardExpValid === true && cardCvvValid === true && phoneNumberValid === true) {
-      passageSubmitButton.disabled = false;
-      return;
-    }
-    passageSubmitButton.disabled = true;
+
+  function toggleFieldValidation() {
+    const isCardSelected = document.getElementById('card-section').style.display === 'block';
+    const isAchSelected = document.getElementById('ach-section').style.display === 'block';
+
+    // Card fields
+    const cardFields = document.querySelectorAll('#card-section input');
+    cardFields.forEach(field => {
+      if (isCardSelected) {
+        field.setAttribute('required', '');
+      } else {
+        field.removeAttribute('required');
+      }
+    });
+
+    // ACH fields
+    const achFields = document.querySelectorAll('#ach-section input, #ach-section select');
+    achFields.forEach(field => {
+      if (isAchSelected) {
+        field.setAttribute('required', '');
+      } else {
+        field.removeAttribute('required');
+      }
+    });
   }
+  function submitButtonStatus() {
+    const isCardSelected = document.getElementById('card-section').style.display === 'block';
+    const isAchSelected = document.getElementById('ach-section').style.display === 'block';
+
+    if (isCardSelected) {
+      // Validate only card fields
+      const cardValid = cardNumberValid && cardExpValid && cardCvvValid && phoneNumberValid;
+      passageSubmitButton.disabled = !cardValid;
+    } else if (isAchSelected) {
+      // Validate only ACH fields
+      const accountNumber = document.getElementById('account-number')?.value.trim();
+      const routingNumber = document.getElementById('routing-number')?.value.trim();
+      const accountName = document.getElementById('account-name')?.value.trim();
+      const accountType = document.getElementById('account-type')?.value;
+      const entryClass = document.getElementById('entry-class')?.value;
+      const transactionType = document.getElementById('transaction-type')?.value;
+
+      const achValid = accountNumber && routingNumber && accountName && accountType && entryClass && transactionType;
+
+      passageSubmitButton.disabled = !achValid;
+    } else {
+      // Disable the button if neither section is selected
+      passageSubmitButton.disabled = true;
+    }
+  }
+
   // Build DOM elements from JSON
   function buildIntoDom(element, obj, useCreateTextNode) {
     if (typeof obj === 'string') {
@@ -922,84 +1134,156 @@ const PassageJs = (function () {
 
     form.addEventListener('submit', event => {
       event.preventDefault();
-      if (!cardNumberValid || !cardExpValid || !cardCvvValid) {
-        alert('Enter valid card information');
-        return;
-      }
-      passageSubmitButton.disabled = true;
-      const loader = document.createElement('div');
-      loader.classList.add('passage-loader');
-      passageSubmitButton.insertAdjacentElement('afterend', loader);
-      try {
-        const formData = new FormData(form);
-        const data = {
-          client_token: clientToken,
-          epi: epi,
-          txn_type: 'cardToken',
-          pan: formData.get('cc_num').replace(/\s/g, ''),
-          expirydate: formData.get('cc_exp').replace(' / ', ''),
-        };
-        const queryString = new URLSearchParams(data).toString();
-        fetch(`${apiUrl}?${queryString}`, {
-          body: JSON.stringify(data),
-          headers: {
-            Accept: '*/*',
-          },
-          method: 'POST',
-        })
-          .then(response => response.json())
-          .then(responseData => {
-            if (!responseData.cardToken) {
+
+      const isCardSelected = document.getElementById('card-section').style.display === 'block';
+      const isAchSelected = document.getElementById('ach-section').style.display === 'block';
+
+      if (isCardSelected) {
+        // Existing logic for Card
+        if (!cardNumberValid || !cardExpValid || !cardCvvValid) {
+          alert('Enter valid card information');
+          return;
+        }
+        passageSubmitButton.disabled = true;
+        const loader = document.createElement('div');
+        loader.classList.add('passage-loader');
+        passageSubmitButton.insertAdjacentElement('afterend', loader);
+        try {
+          const formData = new FormData(form);
+          const data = {
+            client_token: clientToken,
+            epi: epi,
+            txn_type: 'cardToken',
+            pan: formData.get('cc_num').replace(/\s/g, ''),
+            expirydate: formData.get('cc_exp').replace(' / ', ''),
+          };
+          const queryString = new URLSearchParams(data).toString();
+          fetch(`${apiUrl}?${queryString}`, {
+            body: JSON.stringify(data),
+            headers: {
+              Accept: '*/*',
+            },
+            method: 'POST',
+          })
+            .then(response => response.json())
+            .then(responseData => {
+              if (!responseData.cardToken) {
+                alert('Something went wrong, please reload the page.');
+                passageSubmitButton.disabled = false;
+                loader.remove();
+                return;
+              }
+              formData.set('card_token', responseData.cardToken);
+              formData.delete('cc_num');
+              formData.delete('cc_exp');
+              formData.delete('cc_cvv');
+              form.formData = formData;
+
+              const valorHiddenForm = document.getElementById('valorpay-hidden-form');
+              if (valorHiddenForm) {
+                valorHiddenForm.parentNode.removeChild(valorHiddenForm);
+              }
+              const hiddenForm = document.createElement('form');
+              hiddenForm.setAttribute('id', 'valorpay-hidden-form');
+              hiddenForm.style.display = 'none';
+              hiddenForm.method = form.method;
+              hiddenForm.action = form.action;
+
+              document.body.appendChild(hiddenForm);
+              for (const [key, value] of formData.entries()) {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = key;
+                input.value = value;
+                hiddenForm.appendChild(input);
+              }
+              const formAddedEvent = new CustomEvent('passageHiddenFormAdded', {
+                detail: {
+                  form: hiddenForm,
+                },
+              });
+              document.dispatchEvent(formAddedEvent);
+              const hiddenButton = document.createElement('input');
+              hiddenButton.style.display = 'none';
+              hiddenButton.type = 'submit';
+              hiddenForm.appendChild(hiddenButton).click();
+              hiddenForm.removeChild(hiddenButton);
+            })
+            .catch(error => {
+              console.error('Error:', error);
               alert('Something went wrong, please reload the page.');
               passageSubmitButton.disabled = false;
               loader.remove();
               return;
-            }
-            formData.set('card_token', responseData.cardToken);
-            formData.delete('cc_num');
-            formData.delete('cc_exp');
-            formData.delete('cc_cvv');
-            form.formData = formData;
-
-            const valorHiddenForm = document.getElementById('valorpay-hidden-form');
-            if (valorHiddenForm) {
-              valorHiddenForm.parentNode.removeChild(valorHiddenForm);
-            }
-            const hiddenForm = document.createElement('form');
-            hiddenForm.setAttribute('id', 'valorpay-hidden-form');
-            hiddenForm.style.display = 'none';
-            hiddenForm.method = form.method;
-            hiddenForm.action = form.action;
-
-            document.body.appendChild(hiddenForm);
-            for (const [key, value] of formData.entries()) {
-              const input = document.createElement('input');
-              input.type = 'hidden';
-              input.name = key;
-              input.value = value;
-              hiddenForm.appendChild(input);
-            }
-            const formAddedEvent = new CustomEvent('passageHiddenFormAdded', {
-              detail: {
-                form: hiddenForm,
-              },
             });
-            document.dispatchEvent(formAddedEvent);
-            const hiddenButton = document.createElement('input');
-            hiddenButton.style.display = 'none';
-            hiddenButton.type = 'submit';
-            hiddenForm.appendChild(hiddenButton).click();
-            hiddenForm.removeChild(hiddenButton);
+        } catch (error) {
+          alert('Payment request failed. Please try again.');
+        }
+      } else if (isAchSelected) {
+        // New logic for ACH Bank
+        const accountNumber = document.getElementById('account-number').value.trim();
+        const routingNumber = document.getElementById('routing-number').value.trim();
+        const accountName = document.getElementById('account-name').value.trim();
+        const accountType = document.getElementById('account-type').value;
+        const entryClass = document.getElementById('entry-class').value;
+        const transactionType = document.getElementById('transaction-type').value;
+
+        if (!accountNumber || !routingNumber || !accountName || !accountType || !entryClass || !transactionType) {
+          alert('Please fill out all ACH fields');
+          return;
+        }
+
+        passageSubmitButton.disabled = true;
+        const loader = document.createElement('div');
+        loader.classList.add('passage-loader');
+        passageSubmitButton.insertAdjacentElement('afterend', loader);
+
+        try {
+          const data = {
+            client_token: clientToken,
+            epi: epi,
+            txn_type: 'achsale',
+            account_number: accountNumber,
+            routing_number: routingNumber,
+            account_name: accountName,
+            account_type: accountType,
+            entry_class: entryClass,
+            transaction_type: transactionType,
+          };
+
+          fetch(apiUrl, {
+            headers: {
+              Accept: '*/*',
+            },
+            method: 'POST',
+            body: JSON.stringify(data),
+            mode: 'cors',
           })
-          .catch(error => {
-            console.error('Error:', error);
-            alert('Something went wrong, please reload the page.');
-            passageSubmitButton.disabled = false;
-            loader.remove();
-            return;
-          });
-      } catch (error) {
-        alert('Payment request failed. Please try again.');
+            .then(response => response.json())
+            console.log(responseData)
+            .then(responseData => {
+              if (!responseData.success) {
+                alert('Something went wrong, please reload the page.');
+                passageSubmitButton.disabled = false;
+                loader.remove();
+                return;
+              }
+              alert('ACH Payment Submitted Successfully');
+              loader.remove();
+            })
+            .catch(error => {
+              console.error('Error:', error);
+              alert('Something went wrong, please reload the page.');
+              passageSubmitButton.disabled = false;
+              loader.remove();
+            });
+        } catch (error) {
+          console.error('Error:', error);
+          alert('Payment request failed. Please try again.');
+          passageSubmitButton.disabled = false;
+        }
+      } else {
+        alert('Please select a payment method');
       }
     });
   }
@@ -1016,6 +1300,34 @@ const PassageJs = (function () {
       buildFormJson();
       let passageElement = document.getElementById('valor-fields');
       buildIntoDom(passageElement, passageHtmlJson);
+
+      document.getElementById('card-button').addEventListener('click', () => {
+        document.getElementById('card-section').style.display = 'block';
+        document.getElementById('ach-section').style.display = 'none';
+        submitButtonStatus(); // Re-check button status for Card
+      });
+
+      document.getElementById('ach-button').addEventListener('click', () => {
+        document.getElementById('card-section').style.display = 'none';
+        document.getElementById('ach-section').style.display = 'block';
+        submitButtonStatus(); // Re-check button status for ACH
+      });
+
+      // Add event listeners for method toggling
+      document.getElementById('card-button').addEventListener('click', () => {
+        document.getElementById('card-section').style.display = 'block';
+        document.getElementById('ach-section').style.display = 'none';
+        toggleFieldValidation();
+      });
+
+      document.getElementById('ach-button').addEventListener('click', () => {
+        document.getElementById('card-section').style.display = 'none';
+        document.getElementById('ach-section').style.display = 'block';
+        toggleFieldValidation();
+      });
+
+      // Ensure proper validation setup on load
+      toggleFieldValidation();
       if (cardVariant === 'lightbox') {
         lightBoxPopupEvents();
       }

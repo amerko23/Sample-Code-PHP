@@ -41,6 +41,7 @@ function formSubmitAction(event) {
   })
     .then(response => response.json())
     .then(data => {
+      console.log(data);
       if (!data.error_no || data.error_no !== 'S00') {
         alert('Unable to generate payment client ID');
         return;
